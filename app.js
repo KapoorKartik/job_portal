@@ -73,7 +73,8 @@ const jobSchema = new mongoose.Schema(
      type : mongoose.Schema.Types.ObjectId,
     ref : "city",
     required : true
-    }
+    },
+    notice_period : {type : String, required : false }
     },{
     versionKey : false,
     timestamps : true 
@@ -162,7 +163,7 @@ app.post("/skills",async (req,res) => {
   app.post("/jobs",async (req,res) => {
      try{
     const job = await Job.create(req.body)
-    
+   
     return res.send(job)
     }catch(e){
      res.status(500).json({message : e.message})
@@ -171,7 +172,7 @@ app.post("/skills",async (req,res) => {
     
     app.get("/jobs",async (req,res) => {
      try{
-    const job = await Job.find({},{ratings : 1})
+    const job = await Job.find()
     .lean()
     .exec()
     
@@ -210,6 +211,33 @@ app.post("/skills",async (req,res) => {
     })
   
   //include particular skills and city
+     app.get("/jobs/:id/:skill", async (req,res) =>{  
+  try {
+  //console.log(req.params.skill)
+    const jobs = await Job.find({city_id : req.params.id, skills_id : req.params.skill})
+    .populate({path: 'city_id',select : 'city'})
+    .lean().exec()
+     //console.log(jobs)
+    return res.send(jobs)
+  
+  }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  
+  
+    } )
+  
+  //Jobs having 2 Month notice period
+  app.get('/jobs/np2', async (req,res) =>{
+  
+  try{
+  const job = await Job.find({notice_period : "2 Months"}).lean().exec()
+  return res.send(job)
+  
+  }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  })
   
   
   
