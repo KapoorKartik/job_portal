@@ -23,7 +23,7 @@ const Company = mongoose.model("company",companySchema)
 
 
 
-/*-------------job Schema-----------------*/
+/*-------------Skill Schema-----------------*/
 const skillSchema = new mongoose.Schema(
     {
     skill : {type : String , require : true }
@@ -34,6 +34,23 @@ const skillSchema = new mongoose.Schema(
 
 )
 const Skill = mongoose.model("skill",skillSchema)
+
+
+
+/*-------------City Schema-----------------*/
+const citySchema = new mongoose.Schema(
+    {
+    city : {type : String , require : true }
+    },{
+    versionKey : false,
+    timestamps : true 
+    }
+
+)
+const City = mongoose.model("city",citySchema)
+
+
+
 
 
 /*-------------job Schema-----------------*/
@@ -50,6 +67,11 @@ const jobSchema = new mongoose.Schema(
     company_id : {
       type : mongoose.Schema.Types.ObjectId,
     ref : "company",
+    required : true
+    },
+    city_id : {
+     type : mongoose.Schema.Types.ObjectId,
+    ref : "city",
     required : true
     }
     },{
@@ -88,7 +110,7 @@ app.get('/companies', async (req,res) => {
   })
 
 
-/*----------- company CRUD -----------*/
+/*----------- skill CRUD -----------*/
 
 app.post("/skills",async (req,res) => {
      try{
@@ -111,10 +133,45 @@ app.post("/skills",async (req,res) => {
       }
   })
   
+  /*----------- City CRUD -----------*/
+  app.post("/city",async (req,res) => {
+    try{
+    const city = await City.create(req.body)
+    
+    return res.send(city)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  })
+  
+  
+  app.get("/city",async (req,res) => {
+     try{
+    const city = await City.find().lean().exec()
+    
+    return res.send(city)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  })
+  
+  
+  
+  
   /*----------- Jobs CRUD -----------*/
   app.post("/jobs",async (req,res) => {
      try{
     const job = await Job.create(req.body)
+    
+    return res.send(job)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+    })
+    
+    app.get("/jobs",async (req,res) => {
+     try{
+    const job = await Job.find().lean().exec()
     
     return res.send(job)
     }catch(e){
