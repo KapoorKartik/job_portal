@@ -171,13 +171,46 @@ app.post("/skills",async (req,res) => {
     
     app.get("/jobs",async (req,res) => {
      try{
-    const job = await Job.find().lean().exec()
+    const job = await Job.find({},{ratings : 1})
+    .lean()
+    .exec()
     
     return res.send(job)
     }catch(e){
      res.status(500).json({message : e.message})
       }
     })
+    
+    //jobs sort by ratings
+    
+    app.get("/jobs/ratings", async (req,res) =>{
+        try{
+        const jobs = await Job.find().sort({ratings :1})  
+        
+        return res.send(jobs)  
+        
+        }catch(e){
+     res.status(500).json({message : e.message})
+      }
+        
+        })
+  
+  //jobs available for wfh
+  
+  app.get("/jobs/wfh", async (req,res) =>{
+    try{
+    const job = await Job.find({work_from_home: "Yes"})
+    return res.send(job)
+    
+    
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  
+    })
+  
+  //include particular skills and city
+  
   
   
 
