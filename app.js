@@ -86,7 +86,7 @@ const Job = mongoose.model("job",jobSchema)
 
 
 
-/*----------- company CRUD -----------*/
+/*----------- company CRUD ----------*/
 app.post('/companies', async (req,res) => {
     try{
     const company = await Company.create(req.body)
