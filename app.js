@@ -22,16 +22,47 @@ const companySchema = new mongoose.Schema(
 const Company = mongoose.model("company",companySchema)
 
 
+
+/*-------------job Schema-----------------*/
+const skillSchema = new mongoose.Schema(
+    {
+    skill : {type : String , require : true }
+    },{
+    versionKey : false,
+    timestamps : true 
+    }
+
+)
+const Skill = mongoose.model("skill",skillSchema)
+
+
 /*-------------job Schema-----------------*/
 const jobSchema = new mongoose.Schema(
     {
-    
+    role : {type : String , required : true},
+    ratings : {type : Number , required : true},
+    work_from_home : {type : String , required : false , default : "NO"},
+    skills_id : [{
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "skill",
+    required : true
+    }],
+    company_id : {
+      type : mongoose.Schema.Types.ObjectId,
+    ref : "company",
+    required : true
+    }
     },{
     versionKey : false,
     timestamps : true 
     }
     
 )
+
+const Job = mongoose.model("job",jobSchema)
+
+
+
 
 /*----------- company CRUD -----------*/
 app.post('/companies', async (req,res) => {
@@ -57,6 +88,43 @@ app.get('/companies', async (req,res) => {
   })
 
 
+/*----------- company CRUD -----------*/
+
+app.post("/skills",async (req,res) => {
+     try{
+    const skill = await Skill.create(req.body)
+    
+    return res.send(skill)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  })
+  
+  
+  app.get("/skills",async (req,res) => {
+     try{
+    const skill = await Skill.find().lean().exec()
+    
+    return res.send(skill)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+  })
+  
+  /*----------- Jobs CRUD -----------*/
+  app.post("/jobs",async (req,res) => {
+     try{
+    const job = await Job.create(req.body)
+    
+    return res.send(job)
+    }catch(e){
+     res.status(500).json({message : e.message})
+      }
+    })
+  
+  
+
+/*---------------Listening port 2000 -------------------*/
 
 app.listen(2000,  async()=>{
     await connect()
